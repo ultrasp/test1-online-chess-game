@@ -102,14 +102,12 @@ export const ConnectWalletButton = () => {
         <div className="u-content">
           <div className="u-content-container">
             {/* <div className="u-text">{arrInfo[stage].text}</div> */}
-
-            <div className="u-button" onClick={() => handleConnect()}>
-              {loading ? "Loading..." : "Connect"}
-            </div>
-            <div>
-              {wallet}
-              {status}
-            </div>
+            {!wallet && (
+              <div className="u-button" onClick={() => handleConnect()}>
+                {loading ? "Loading..." : "Connect"}
+              </div>
+            )}
+            {wallet && <div>You wallet address: {wallet}</div>}
           </div>
         </div>
       </div>
