@@ -1,21 +1,9 @@
-import { useLocation, useNavigate } from "react-router-dom";
 import { useState, useEffect } from "react";
 import "bootstrap/dist/css/bootstrap.min.css";
 import "./ConnectWalletButton.scss";
-import { gameModes, userTypes } from "../../../utils/constant";
 
-import {
-  connectMetamask,
-  connectWallet,
-  getCurrentWalletConnected,
-} from "../../../utils/interact.js";
-import {
-  chainId,
-  llgContractAddress,
-  llgRewardContractAddress,
-} from "../../../utils/address";
-
-let arrInfo = {};
+import { connectMetamask } from "../../../utils/interact.js";
+import { chainId } from "../../../utils/address";
 
 export const ConnectWalletButton = () => {
   const [wallet, setWallet] = useState();
@@ -24,10 +12,10 @@ export const ConnectWalletButton = () => {
 
   const [stage, setStage] = useState("connect");
 
-  let amount;
   let walletAddr;
 
   useEffect(() => {
+    connectWalletPressed();
     addWalletListener();
   });
 
@@ -36,17 +24,9 @@ export const ConnectWalletButton = () => {
     if (window.ethereum) {
       window.ethereum.on("accountsChanged", (accounts) => {
         if (accounts.length > 0) {
-          // this.setState({
-          //   wallet: accounts[0],
-          //   status: "Wallet connected",
-          // });
           setWallet(accounts[0]);
           setStatus("Wallet connected");
         } else {
-          // this.setState({
-          //   wallet: "",
-          //   status: "🦊 Connect to Metamask.",
-          // });
           setWallet("");
           setStatus("🦊 Connect to Metamask.");
         }
@@ -108,6 +88,7 @@ export const ConnectWalletButton = () => {
               </div>
             )}
             {wallet && <div>You wallet address: {wallet}</div>}
+            {status}
           </div>
         </div>
       </div>
