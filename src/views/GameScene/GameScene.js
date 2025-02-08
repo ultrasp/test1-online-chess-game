@@ -42,6 +42,7 @@ import {chainId, llgContractAddress, llgRewardContractAddress} from '../../utils
 
 import {getContractWithSigner, getContractWithoutSigner} from '../../utils/interact';
 import { Contract, ethers } from 'ethers'
+import { ConnectWalletButton } from "../../components/UI/ConnectWalletButton/ConnectWalletButton.js";
 
 const llgContractABI = require("../../utils/llg-contract-abi.json");
 const llgRewardContractABI = require("../../utils/llg-reward-contract-abi.json");
@@ -78,7 +79,7 @@ export default class Scene extends Component {
         // })
 
         // this.addWalletListener();
-        
+
         // this.connectWalletPressed();
         /**********************************  Scene Environment Setup  **********************************/
         /////////////////////////////////////////////////////////////////////////////////////////////////
@@ -141,7 +142,7 @@ export default class Scene extends Component {
 /***************************outline **********************************/
         const composer = new EffectComposer( renderer );
         const renderScene = new RenderPass( scene, camera );
-        
+
         composer.addPass( renderScene );
 
         // const redOut = new CustomOutlinePass(
@@ -165,7 +166,7 @@ export default class Scene extends Component {
 
         this.whiteTeamObjects = whiteTeamObjects;
         this.blackTeamObjects = blackTeamObjects;
-        
+
         const outlineParams = {
             edgeStrength: 3,
             edgeGlow: 0,
@@ -234,7 +235,7 @@ export default class Scene extends Component {
 
         var loader = new GLTFLoader();  // GLTF loader to load gltf models
         loader.setDRACOLoader(dracoLoader);
-        
+
         // TODO : Load GLTF models
         Promise.all([
             loader.loadAsync( 'models/chess-board.glb' ),
@@ -250,7 +251,7 @@ export default class Scene extends Component {
             loader.loadAsync( 'models/item/ice-wall.glb' ),
             loader.loadAsync( 'models/item/net.glb' ),
         ]).then((gltfArray) => {
-            
+
             // TODO : Add chess board to the scene
             var board = gltfArray[0].scene.clone();
             board.scale.set( modelProps.board.scale, modelProps.board.scale, modelProps.board.scale );
@@ -271,7 +272,7 @@ export default class Scene extends Component {
             this.meshArray['king'] = gltfArray[6].scene.clone();
             this.meshArray['fox'] = gltfArray[7].scene.clone();
             this.meshArray['lucifer'] = gltfArray[8].scene.clone();
-            
+
             const iceMesh = gltfArray[10].scene.clone();
             iceMesh.position.set(0, 1, 0);
             iceMesh.scale.set(13, 13, 13);
@@ -283,7 +284,7 @@ export default class Scene extends Component {
             petrifyMesh.position.set(0, 1, 0);
             this.meshArray['petrify'] = petrifyMesh.clone();
 
-            // add and initialize board ground and characters 
+            // add and initialize board ground and characters
             for( let i = 0; i < boardSize; i++ ) {
                 this.boardGroundArray.push([]);
                 for( let j = 0; j < boardSize; j++ ) {
@@ -297,7 +298,7 @@ export default class Scene extends Component {
                     tileMesh.children[0].traverse(n => { if ( n.isMesh ) {
                         n.castShadow = true;
                         n.receiveShadow = true;
-                        if(n.material.map) n.material.map.anisotropy = 16; 
+                        if(n.material.map) n.material.map.anisotropy = 16;
                     }});
 
                     scene.add(tileMesh);
@@ -411,7 +412,7 @@ export default class Scene extends Component {
                         mesh.children[0].traverse(n => { if ( n.isMesh ) {
                             n.castShadow = true;
                             n.receiveShadow = true;
-                            if(n.material.map) n.material.map.anisotropy = 16; 
+                            if(n.material.map) n.material.map.anisotropy = 16;
                         }});
 
                         const temp = {};
@@ -440,7 +441,7 @@ export default class Scene extends Component {
                 }
 
                 this.socket.emit( socketEvents['CS_Ready'], { walletAddress: this.props.wallet } );
-                
+
                 this.setState({
                     waitingModalTitle: 'Waiting for players',
                 })
@@ -485,7 +486,7 @@ export default class Scene extends Component {
                         opponentName: aiNames[ this.props.aiLevel ]
                     })
 
-                    
+
                     this.startNewTimer();
                 }
             }
@@ -507,7 +508,7 @@ export default class Scene extends Component {
 
             mouse.x = ((event.clientX - (window.innerWidth - renderer.domElement.clientWidth) / 2)  / renderer.domElement.clientWidth ) * 2 - 1;
             mouse.y = - ((event.clientY - (window.innerHeight - renderer.domElement.clientHeight) / 2) / renderer.domElement.clientHeight) * 2 + 1;
-        
+
             raycaster.setFromCamera( mouse, camera );
 
             if( self.state.currentItem && self.state.currentItem !== heroItems['jumpyShoe'] ) {
@@ -548,7 +549,7 @@ export default class Scene extends Component {
                 }
                 return;
             }
-        
+
             // only can select own chess pieces
             const myPiecesArray = self.boardPiecesArray.filter(item => {
                 if( self.props.mode === gameModes['practise'] ) {
@@ -581,7 +582,7 @@ export default class Scene extends Component {
                 }
             }
 
-            // TODO : check if select move possible position 
+            // TODO : check if select move possible position
             if( self.selectedPiece ) {
                 for( let i = 0; i < self.possibleMoves.length; i++ ) {
                     const groundIndex = getMatrixIndexFromFen( self.possibleMoves[i] );
@@ -598,7 +599,7 @@ export default class Scene extends Component {
                             const res = {}; res[from] = to;
 
                             performMove(res);
-                            
+
                             self.selectedPiece = null;
 
                             // TODO : AI move action
@@ -631,13 +632,13 @@ export default class Scene extends Component {
 
                 mouse.x = ((event.clientX - (window.innerWidth - renderer.domElement.clientWidth) / 2)  / renderer.domElement.clientWidth ) * 2 - 1;
                 mouse.y = - ((event.clientY - (window.innerHeight - renderer.domElement.clientHeight) / 2) / renderer.domElement.clientHeight) * 2 + 1;
-            
+
                 raycaster.setFromCamera( mouse, camera );
 
                 for( let i = 0; i < self.boardGroundArray.length; i++ ) {
                     for( let j = 0; j < self.boardGroundArray[i].length; j++ ) {
                         const intersect = raycaster.intersectObject( self.boardGroundArray[i][j].mesh );
-        
+
                         if( intersect.length > 0 ) {
                             if( self.state.currentItem === heroItems['iceWall'] ) {
                                 for( let t = -1; t <= 1; t++ ) {
@@ -656,7 +657,7 @@ export default class Scene extends Component {
                                         } else {
                                             self.currentMouseMeshes[t + 1].material.color = new THREE.Color('#d75050');
                                         }
-    
+
                                         self.currentMouseMeshes[t + 1].position.set( position.x + 0.1 , 1, position.z + 0.06 - 0.5 );
                                     }
                                 }
@@ -665,15 +666,15 @@ export default class Scene extends Component {
                             if( self.state.currentItem === heroItems['petrify'] ) {
                                 const activeBoard = self.boardGroundArray[i][j];
                                 const position = getMeshPosition( activeBoard.rowIndex, activeBoard.colIndex );
-                                const pieceIndex = self.boardPiecesArray.findIndex((item) => 
-                                    item.rowIndex === activeBoard.rowIndex 
-                                    && item.colIndex === activeBoard.colIndex 
-                                    && item.pieceType !== 'Q' 
+                                const pieceIndex = self.boardPiecesArray.findIndex((item) =>
+                                    item.rowIndex === activeBoard.rowIndex
+                                    && item.colIndex === activeBoard.colIndex
+                                    && item.pieceType !== 'Q'
                                     && item.pieceType !== 'q'
                                     && item.pieceType !== 'K'
                                     && item.pieceType !== 'k'
                                 );
-                                
+
                                 self.currentMouseMeshes[0].children[0].material = self.currentMouseMeshes[0].children[0].material.clone();
                                 self.currentMouseMeshes[0].material = self.currentMouseMeshes[0].children[0].material;
 
@@ -685,7 +686,7 @@ export default class Scene extends Component {
 
                                 self.currentMouseMeshes[0].position.set( position.x , 0.6, position.z );
                             }
-    
+
                             return;
                         }
                     }
@@ -714,7 +715,7 @@ export default class Scene extends Component {
             const position = getMeshPosition(rowIndex, colIndex);
 
             piece.mesh.position.y = position.y;
-            
+
             piece.moveAnim = {
                 target: position,
                 speed: {
@@ -760,7 +761,7 @@ export default class Scene extends Component {
                     const matrixIndex = getMatrixIndexFromFen('H1');
                     const rook = this.boardPiecesArray.filter((item) => item.rowIndex === matrixIndex.rowIndex && item.colIndex === matrixIndex.colIndex);
                     const targetIndex = getMatrixIndexFromFen('F1');
-                    
+
                     movePiece( rook[0], targetIndex.rowIndex, targetIndex.colIndex );
                 }
             } else if( this.props.game.board.configuration.turn === 'black' ) {
@@ -768,13 +769,13 @@ export default class Scene extends Component {
                     const matrixIndex = getMatrixIndexFromFen('A8');
                     const rook = this.boardPiecesArray.filter((item) => item.rowIndex === matrixIndex.rowIndex && item.colIndex === matrixIndex.colIndex);
                     const targetIndex = getMatrixIndexFromFen('D8');
-                    
+
                     movePiece( rook[0], targetIndex.rowIndex, targetIndex.colIndex );
                 } else if( this.boardPiecesArray[fromIndex].pieceType === 'k' && to === 'G8' && this.props.game.board.configuration.castling.blackShort ) {
                     const matrixIndex = getMatrixIndexFromFen('H8');
                     const rook = this.boardPiecesArray.filter((item) => item.rowIndex === matrixIndex.rowIndex && item.colIndex === matrixIndex.colIndex);
                     const targetIndex = getMatrixIndexFromFen('F8');
-                    
+
                     movePiece( rook[0], targetIndex.rowIndex, targetIndex.colIndex );
                 }
             }
@@ -840,10 +841,10 @@ export default class Scene extends Component {
                             showVictoryModal: true,
                             showLoseModal: false,
                         });
-                        
+
                         if(!self.props.friendMatch) {
                             window.localStorage.setItem("wins", parseInt(self.state.numConsecutiveWins) + 1)
-                            
+
                             if(window.localStorage.getItem("chance") == null | window.localStorage.getItem("chance") == "1") self.determineIfHasBonus();
                         }
                     } else {
@@ -911,7 +912,7 @@ export default class Scene extends Component {
 
                     const toMatrixIndex = getMatrixIndexFromFen(toHistory);
                     self.boardGroundArray[ toMatrixIndex.rowIndex ][ toMatrixIndex.colIndex ].mesh.material.color.setStyle(historyTone);
-        
+
                     const fromMatrixIndex = getMatrixIndexFromFen(fromHistory);
                     self.boardGroundArray[ fromMatrixIndex.rowIndex ][ fromMatrixIndex.colIndex ].mesh.material.color.setStyle(historyTone);
                 }
@@ -935,7 +936,7 @@ export default class Scene extends Component {
                 if( kIndex !== -1 ) {
                     const rowIndex = self.boardPiecesArray[kIndex].rowIndex;
                     const colIndex = self.boardPiecesArray[kIndex].colIndex;
-    
+
                     self.boardGroundArray[rowIndex][colIndex].mesh.material.color.setStyle( dangerTone );
                 }
             } else {
@@ -944,7 +945,7 @@ export default class Scene extends Component {
                 const kIndex = self.boardPiecesArray.findIndex((item) => item.pieceType === pieceType);
                 const rowIndex = self.boardPiecesArray[kIndex].rowIndex;
                 const colIndex = self.boardPiecesArray[kIndex].colIndex;
-    
+
                 const pointer = getFenFromMatrixIndex( rowIndex, colIndex );
                 if( self.props.game.board.isPieceUnderAttack(pointer) ) {
                     self.boardGroundArray[rowIndex][colIndex].mesh.material.color.setStyle( dangerTone );
@@ -955,7 +956,7 @@ export default class Scene extends Component {
             if( self.selectedPiece && self.possibleMoves ) {
                 self.possibleMoves.forEach((pos) => {
                     const matrixIndex = getMatrixIndexFromFen(pos);
-    
+
                     self.boardGroundArray[ matrixIndex.rowIndex ][ matrixIndex.colIndex ].mesh.material.color.setStyle( selectTone );
                 });
             }
@@ -977,7 +978,7 @@ export default class Scene extends Component {
                     }
                 }
             });
-            
+
             requestAnimationFrame( animate );
             // render composer effect
             renderer.render(scene, camera);
@@ -1133,7 +1134,7 @@ export default class Scene extends Component {
             startTimeOfDay: startTimeOfDay.toNumber()
         });
 
-        let diffDays = (Date.now() - startTimeOfDay) / (24*60*60*1000); 
+        let diffDays = (Date.now() - startTimeOfDay) / (24*60*60*1000);
         if(diffDays >= 1) {
             window.localStorage.setItem("wins", 0);
             window.localStorage.setItem("chance", 1);
@@ -1148,7 +1149,7 @@ export default class Scene extends Component {
         this.setState({
             tax: tax.toNumber()
         })
-    }   
+    }
 
     determineIfHasBonus = async () => {
         let llgRewardContract = getContractWithSigner(llgRewardContractAddress, llgRewardContractABI);
@@ -1162,11 +1163,11 @@ export default class Scene extends Component {
             });
         }
     }
-    
+
     getBonusReward = async () => {
         try {
             let llgRewardContract = getContractWithSigner(llgRewardContractAddress, llgRewardContractABI);
-            
+
             let wallet = this.props.wallet ? this.props.wallet : this.state.wallet;
             console.error('*****', wallet)
 
@@ -1175,14 +1176,14 @@ export default class Scene extends Component {
                 from: this.props.wallet,
             })
             let res = await tx.wait()
-            
+
             if(res.transactionHash) {
                 // window.location = '/';
                 window.localStorage.setItem("lastRewardTime", Date.now());
                 this.setState({
                     showClaimModal: false
                 })
-                
+
             }
         } catch(e) {
             window.localStorage.setItem("lastRewardTime", Date.now());
@@ -1191,7 +1192,7 @@ export default class Scene extends Component {
             })
         }
 
-        
+
     }
 
     getWinningRewards = async () => {
@@ -1202,7 +1203,7 @@ export default class Scene extends Component {
         })
 
         let res2 = await tx2.wait()
-        
+
         if(res2.transactionHash) {
             console.error(res2);
             window.location = '/';
@@ -1219,7 +1220,7 @@ export default class Scene extends Component {
         })
 
         let res2 = await tx2.wait()
-        
+
         if(res2.transactionHash) {
             console.error(res2);
             window.location = '/';
@@ -1378,14 +1379,14 @@ export default class Scene extends Component {
         } else {
             this.props.game.move( this.state.pawnTransProps.from, this.state.pawnTransProps.to );
             this.props.game.setPiece( this.state.pawnTransProps.to, pieceType );
-    
+
             this.setState({
                 myTurn: this.props.side === this.props.game.board.configuration.turn
             })
 
             this.startNewTimer();
 
-            if( this.props.mode === gameModes['P2E'] ) {    // ai action after select the piece 
+            if( this.props.mode === gameModes['P2E'] ) {    // ai action after select the piece
                 this.aiMoveAction(this.props.aiLevel);
             }
         }
@@ -1409,7 +1410,7 @@ export default class Scene extends Component {
     startNewTimer() {
         if( this.timeInterval )
             clearInterval( this.timeInterval );
-        
+
         this.setState({
             remainingTime: timeLimit
         })
@@ -1601,7 +1602,7 @@ export default class Scene extends Component {
                     } else if( newMesh.type === heroItems['thunderstorm'] ) {
                         texture = new THREE.TextureLoader().load(thunderstorm);
                     }
-    
+
                     const itemGeo = new THREE.PlaneBufferGeometry(0.8, 0.8, 100, 100)
                     const itemMaterial = new THREE.MeshStandardMaterial({
                         side: THREE.DoubleSide,
@@ -1615,14 +1616,14 @@ export default class Scene extends Component {
 
                     itemMesh.rotateX( ang2Rad( this.side === 'white' ? -90 : 90) );
                     itemMesh.rotateY( ang2Rad( this.side === 'white' ? 0 : 180 ) );
-    
+
                     const itemIndex = getMatrixIndexFromFen( newMesh.position );
                     itemMesh.position.set( itemIndex.colIndex * tileSize - tileSize * 3.5, 0.6, -( itemIndex.rowIndex * tileSize - tileSize * 3.5 ) );
-    
+
                     this.scene.add(itemMesh);
-    
+
                     newMesh.mesh = itemMesh;
-    
+
                     this.itemMeshes.push( newMesh );
                 }
             })
@@ -1669,7 +1670,7 @@ export default class Scene extends Component {
 
     handlePlayerLogOut(params) {
         const username = params.username;
-        
+
         // this.setState({
         //     showLeaveNotificationModal: true,
         //     showLeaveNotificationMessage: username + ' logged out!'
@@ -1767,19 +1768,19 @@ export default class Scene extends Component {
             const matrixIndex = getMatrixIndexFromFen('H1');
             const rook = this.boardPiecesArray.filter((item) => item.rowIndex === matrixIndex.rowIndex && item.colIndex === matrixIndex.colIndex);
             const targetIndex = getMatrixIndexFromFen('F1');
-            
+
             this.movePiece( rook[0], targetIndex.rowIndex, targetIndex.colIndex );
         } else if( castling.blackLong ) {
             const matrixIndex = getMatrixIndexFromFen('A8');
             const rook = this.boardPiecesArray.filter((item) => item.rowIndex === matrixIndex.rowIndex && item.colIndex === matrixIndex.colIndex);
             const targetIndex = getMatrixIndexFromFen('D8');
-            
+
             this.movePiece( rook[0], targetIndex.rowIndex, targetIndex.colIndex );
         } else if( castling.blackShort ) {
             const matrixIndex = getMatrixIndexFromFen('H8');
             const rook = this.boardPiecesArray.filter((item) => item.rowIndex === matrixIndex.rowIndex && item.colIndex === matrixIndex.colIndex);
             const targetIndex = getMatrixIndexFromFen('F8');
-            
+
             this.movePiece( rook[0], targetIndex.rowIndex, targetIndex.colIndex );
         }
 
@@ -1844,7 +1845,7 @@ export default class Scene extends Component {
                     } else if( newMesh.type === heroItems['thunderstorm'] ) {
                         texture = new THREE.TextureLoader().load(thunderstorm);
                     }
-    
+
                     const itemGeo = new THREE.PlaneBufferGeometry(0.8, 0.8, 100, 100)
                     const itemMaterial = new THREE.MeshStandardMaterial({
                         side: THREE.DoubleSide,
@@ -1858,14 +1859,14 @@ export default class Scene extends Component {
 
                     itemMesh.rotateX( ang2Rad( this.side === 'white' ? -90 : 90) );
                     itemMesh.rotateY( ang2Rad( this.side === 'white' ? 0 : 180 ) );
-    
+
                     const itemIndex = getMatrixIndexFromFen( newMesh.position );
                     itemMesh.position.set( itemIndex.colIndex * tileSize - tileSize * 3.5, 0.6, -( itemIndex.rowIndex * tileSize - tileSize * 3.5 ) );
-    
+
                     this.scene.add(itemMesh);
-    
+
                     newMesh.mesh = itemMesh;
-    
+
                     this.itemMeshes.push( newMesh );
                 }
             })
@@ -1901,6 +1902,7 @@ export default class Scene extends Component {
     render() {
         return (
           <div className="GameScene">
+            <ConnectWalletButton></ConnectWalletButton>
             <div className="game-container">
                 <div className="game-canvas" ref={(ref) => (this.container = ref)}></div>
                 <GameStateHeader
@@ -1908,8 +1910,10 @@ export default class Scene extends Component {
                     myTurn={this.state && this.state.myTurn}
                     remainingTime={this.state && this.state.remainingTime}
                 />
-                <GameStateFooter 
-                    showInventoryAction={ () => this.setState({ showInventory: !this.state.showInventory }) } 
+            {/* Connect Wallet Button */}
+
+                <GameStateFooter
+                    showInventoryAction={ () => this.setState({ showInventory: !this.state.showInventory }) }
                     quitAction={() => this.setState({ showConfirmModal: true })}
                     sendDrawRequest={ this.sendDrawRequest.bind(this) }
                 />
@@ -1940,8 +1944,8 @@ export default class Scene extends Component {
               message={this.state && this.state.showLeaveNotificationMessage}
             />
 
-            <Inventory 
-                show={ this.state && this.state.showInventory } 
+            <Inventory
+                show={ this.state && this.state.showInventory }
                 items={ this.state && this.state.myItems }
                 myTurn={this.state && this.state.myTurn}
                 selectItem={ this.selectItem.bind(this) }
